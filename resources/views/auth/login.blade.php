@@ -11,9 +11,10 @@
             <div class="col-lg-6">
                 <div class="login_box_img">
                     <div class="hover">
-                        <h4>New to our website?</h4>
-                        <p>There are advances being made in science and technology everyday, and a good example of this is the</p>
-                        <a class="button button-account" href="{{route('register')}}">Create an Account</a>
+                        <h4>Apa anda sudah punya akun ? </h4>
+                        <p>Selamat Datang dan Selamat Berbelanja</p>
+                        <a class="button button-account" href="{{route('register')}}">Daftar</a>
+
                     </div>
                 </div>
             </div>
@@ -28,12 +29,7 @@
                         <div class="col-md-12 form-group">
                             <input type="password" class="form-control" id="name" name="password" placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
                         </div>
-                        <div class="col-md-12 form-group">
-                            <div class="creat_account">
-                                <input type="checkbox" id="f-option2" name="selector">
-                                <label for="f-option2">Keep me logged in</label>
-                            </div>
-                        </div>
+
                         <div class="col-md-12 form-group">
                             <button type="submit" value="submit" class="button button-login w-100">Log In</button>
                             <a href="#">Forgot Password?</a>

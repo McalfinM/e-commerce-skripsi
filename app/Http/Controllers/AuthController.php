@@ -23,8 +23,16 @@ class AuthController extends Controller
         }
         return view('auth.register');
     }
+
+    public function company_register()
+    {
+        return view('admin.user.register_company');
+    }
+
     public function register_process(RegisterRequest $request)
     {
+        // dd($request);
+
 
         $this->userService->create($request->all());
         return redirect()->back()->with('success', 'Akun berhasil terbuat');
@@ -50,7 +58,7 @@ class AuthController extends Controller
             $role = Auth::user()->role;
             if ($role == 'Admin') {
                 return redirect()->intended('/admin/dashboard');
-            } elseif ($role == 'Member') {
+            } elseif ($role == 'Member' || $role == 'Company') {
                 return redirect()->intended('/');
             }
             return redirect('/');

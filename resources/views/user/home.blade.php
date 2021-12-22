@@ -39,6 +39,7 @@
                         <button class="btn btn-primary"><i class="ti-shopping-cart"></i></button>
                         <input type="hidden" name="product_id" value="{{$datas->id}}" />
                         <input type="hidden" name="notes" value="" />
+                        <input type="hidden" name="type" value="individual" />
                     </form>
                     @else
                     <a class="btn btn-primary" href="{{route('login')}}"><i class="ti-shopping-cart"></i></a>

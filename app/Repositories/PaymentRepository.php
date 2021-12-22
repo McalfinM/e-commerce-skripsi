@@ -16,11 +16,19 @@ class PaymentRepository
         $payment->payment_method = $data['payment_method'];
         $payment->quantity = $data['quantity'];
         $payment->no_invoice = $data['no_invoice'];
+        $payment->status = "Paid";
         $payment->ppn = $data['ppn'];
         $payment->image = $data['image'];
         $payment->total_price = $data['total_price'];
 
         $payment->save();
         return $payment;
+    }
+
+    public function find_one_with_user($id)
+    {
+        $order = Payment::where('user_id', $id)->get();
+
+        return $order;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\UserRepository;
 use App\Services\ProfileService;
+use Illuminate\Support\Str;
 
 class UserService
 {
@@ -20,23 +21,30 @@ class UserService
 
     public function create($data)
     {
-        // dd($data['password']);
+        // dd($data);
+        if ($data['type'] == 'company') {
+            $data['role'] = 'Company';
+        } else {
+            $data['role'] = 'Member';
+        }
+        // dd($data);
+
+
         if ($data['password'] !== $data['confirm_password']) {
             return redirect()->back()->with('error' . 'Password tidak sama');
-        } else {
-            $password = bcrypt($data['password']);
-            $data['password'] = $password;
-            $data['role'] = 'Member';
-            $user = $this->userRepository->create($data);
-            $profile = [
-                'user_id' => $user->id,
-                'full_name' => $user->username,
-                'phone_number' => null,
-                'address' => null,
-                'image' => 'image.jpg'
-
-            ];
-            $this->profileService->create($profile);
         }
+
+        $password = bcrypt($data['password']);
+        $data['password'] = $password;
+        $user = $this->userRepository->create($data);
+        $profile = [
+            'user_id' => $user->id,
+            'full_name' => $user->username,
+            'phone_number' => null,
+            'address' => null,
+            'image' => 'image.jpg'
+
+        ];
+        $this->profileService->create($profile);
     }
 }

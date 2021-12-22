@@ -46,4 +46,11 @@ class PaymentService
 
         $this->paymentRepository->create($entityPayment);
     }
+
+    public function find_one_with_user($id)
+    {
+        $order = $this->paymentRepository->find_one_with_user($id);
+
+        return $order;
+    }
 }

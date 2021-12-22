@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\OrderController;
@@ -37,6 +38,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/checkout/{order_number}', [HomeController::class, 'checkout'])->name('checkout');
     Route::get('/history-order', [HomeController::class, 'history-order'])->name('history_order');
     Route::post('/payment/{id}', [PaymentController::class, 'create_payment'])->name('create_payment');
+    Route::get('/order-history', [PaymentController::class, 'order_history'])->name('order_history');
+    Route::post('/bidding-price', [OrderController::class, 'bidding_price'])->name('bidding_price');
 });
 Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
@@ -44,4 +47,36 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
         Route::get('/create', [ProductController::class, 'create'])->name('create_product');
         Route::post('/create_process', [ProductController::class, 'create_process'])->name('create_product_process');
     });
+
+    Route::group(['prefix' => 'user'], function () {
+        Route::get('/', [AdminController::class, 'user_control'])->name('user_control');
+        Route::get('/company-register', [AuthController::class, 'company_register'])->name('company_register');
+    });
+
+    Route::group(['prefix' => 'order'], function () {
+        Route::get('/request-price-order', [AdminController::class, 'list_request_bidding'])->name('list_request_bidding');
+        Route::get('/detail-bidding-request/{id}', [AdminController::class, 'detail_request_bidding'])->name('detail_request_bidding');
+        Route::post('/send-bidding/{id}', [AdminController::class, 'send_bidding_price'])->name('send_bidding_price');
+        Route::post('/deal/{id}', [AdminController::class, 'bidding_deal'])->name('bidding_deal_admin');
+        Route::get('/print/{id}', [AdminController::class, 'list_order_inventory_pdf'])->name('list_order_inventory_pdf');
+        Route::get('/surat_jalan/{id}', [AdminController::class, 'surat_jalan_pdf'])->name('surat_jalan_pdf');
+        Route::post('/success_order/{id}', [AdminController::class, 'success_order'])->name('success_order');
+    });
+});
+
+Route::group(['middleware' => 'company', 'prefix' => 'company'], function () {
+
+    Route::get('/dashboard', [CompanyController::class, 'dashboard'])->name('company_dashboard');
+    Route::get('/shop', [CompanyController::class, 'index'])->name('company_shop');
+    Route::group(['prefix' => 'order'], function () {
+        Route::get('/', [CompanyController::class, 'order'])->name('company_order');
+        Route::get('/company-request-price-order/{id}', [OrderController::class, 'company_request_price_order'])->name('company_request_price_order');
+        Route::get('/bidding-request', [CompanyController::class, 'request_price_order'])->name('request_price_order');
+        Route::get('/detail-bidding-request/{id}', [CompanyController::class, 'detail_list_bidding_price'])->name('detail_list_bidding_price');
+        Route::post('/send-bidding/{id}', [CompanyController::class, 'request_bidding_price'])->name('request_bidding_price');
+        Route::post('/deal/{id}', [CompanyController::class, 'bidding_deal'])->name('bidding_deal_company');
+        Route::post('/volume-update', [OrderController::class, 'volume_update'])->name('volume_update');
+    });
+    Route::post('/cart-update', [OrderController::class, 'cart_update'])->name('cart_update');
+    Route::get('/delete-item/{id}', [OrderController::class, 'delete_item'])->name('delete_item');
 });

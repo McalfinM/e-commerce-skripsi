@@ -54,6 +54,7 @@
                         </div>
                         <div class="col-md-12 form-group">
                             <input type="password" class="form-control" id="confirm_password" name="confirm_password" value="" placeholder="Confirm Password">
+                            <input type="hidden" class="form-control" id="company" name="type" value="individu" />
                         </div>
                         <div class="col-md-12 form-group">
                             <div class="creat_account">
