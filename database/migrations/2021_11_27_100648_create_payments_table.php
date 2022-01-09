@@ -24,7 +24,7 @@ class CreatePaymentsTable extends Migration
             $table->integer('ppn');
             $table->integer('total_price');
             $table->string('image');
-            $table->string('courier')->nullable();
+            $table->string('status');
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade')->onUpdate('cascade');

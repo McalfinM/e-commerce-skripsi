@@ -19,6 +19,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
     ];
@@ -45,5 +46,10 @@ class User extends Authenticatable
     public function order()
     {
         return $this->hasOne(Order::class)->where('status', 'Order Created')->first();
+    }
+
+    public function cart()
+    {
+        return $this->hasOne(Order::class)->where('status', 'Order Created')->where('type', 'individual')->first();
     }
 }

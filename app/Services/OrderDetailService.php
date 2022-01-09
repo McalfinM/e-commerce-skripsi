@@ -35,4 +35,33 @@ class OrderDetailService
         $data = $this->orderDetailRepository->find_by_id_search_with_order_created($id);
         return $data;
     }
+
+    public function updateQuantity($id, $data)
+    {
+        // dd($data['quantity']);
+        $data = $this->orderDetailRepository->update_quantity($id, $data);
+        return $data;
+    }
+
+    public function bidding_price($id, $data)
+    {
+        // dd($data['quantity']);
+        $data = $this->orderDetailRepository->bidding_price($id, $data);
+        $order = $this->orderDetailRepository->find_by_id_search_with_order_created($data->order_id);
+        return $order;
+    }
+
+    public function delete_item($id)
+    {
+        // dd($data['quantity']);
+        $data = $this->orderDetailRepository->delete_item($id);
+
+        return $data;
+    }
+
+    public function volume_update($id, $data)
+    {
+        $data = $this->orderDetailRepository->volume_update($id, $data);
+        return $data;
+    }
 }

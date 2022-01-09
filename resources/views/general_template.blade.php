@@ -62,13 +62,22 @@
                         </ul>
 
                         <ul class="nav-shop">
-                            <li class="nav-item"><button><i class="ti-search"></i></button></li>
+
+                            @if(Auth::user() && Auth::user()->role == 'Company')
+
+                            @if(url()->current() == 'http://localhost:8000')
+                            <li class="nav-item"><a href="{{route('company_shop')}}" class="btn btn-primary text-white">Minta Penawaran Barang</a></li>
+                            @endif
+                            @endif
 
                             @if(Auth::user())
-                            <li class="nav-item"><a href="{{route('cart')}}"><i class="ti-shopping-cart"></i><span class="nav-shop__circle">{{auth()->user()->order()->quantity ?? 0}}</span></a> </li>
+                            <li class="nav-item"><a href="{{route('cart')}}"><i class="ti-shopping-cart"></i><span class="nav-shop__circle">{{auth()->user()->cart()->quantity ?? 0}}</span></a> </li>
                             <li class="nav-item submenu dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{Auth::user()->username}}</a>
                                 <ul class="dropdown-menu">
+                                    @if(Auth::user()->role == 'Company')
+                                    <li class="nav-item"><a class="nav-link" href="{{route('company_dashboard')}}">Dashboard</a></li>
+                                    @endif
                                     <li class="nav-item"><a class="nav-link" href="login.html">Daftar Pesanan</a></li>
                                     <li class="nav-item"><a class="nav-link" href="register.html">Profile</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{route('logout')}}">Logout</a></li>

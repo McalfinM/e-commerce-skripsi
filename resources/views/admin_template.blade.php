@@ -195,10 +195,11 @@
 
 
                 <!-- Sidebar Menu -->
+                @if(Auth::user()->role == 'Admin')
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
+
+
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-chart-line"></i>
@@ -206,6 +207,35 @@
                                     Dashboard
                                 </p>
                             </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active">
+                                <i class="nav-icon fas fa-shopping-cart"></i>
+                                <p>
+                                    Company
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{route('list_request_bidding')}}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>List Request Penawaran </p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="./index2.html" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Dashboard v2</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="./index3.html" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Dashboard v3</p>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
@@ -248,9 +278,94 @@
                                 </p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>
+                                    User
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{route('user_control')}}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Company User</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="pages/mailbox/compose.html" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Lihat Produk</p>
+                                    </a>
+                                </li>
 
+                            </ul>
+                        </li>
                     </ul>
                 </nav>
+                @elseif(Auth::user()->role == 'Company')
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-chart-line"></i>
+                                <p>
+                                    Dashboard
+                                </p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active">
+                                <i class="nav-icon fas fa-shopping-cart"></i>
+                                <p>
+                                    Penawaran Barang
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{route('company_order')}}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>List Barang </p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{route('request_price_order')}}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Penawaran Harga</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="./index3.html" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Proses Pemesanan</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-file-alt"></i>
+                                <p>
+                                    Invoice
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('company_shop')}}" class="nav-link">
+                                <i class="nav-icon fas fa-shopping-basket"></i>
+                                <p>
+                                    Minta Penawaran Barang
+                                </p>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                @endif
                 <!-- /.sidebar-menu -->
             </div>
             <!-- /.sidebar -->
@@ -323,6 +438,8 @@
     <script src="{{asset('assets/plugins/codemirror/mode/css/css.js')}}"></script>
     <script src="{{asset('assets/plugins/codemirror/mode/xml/xml.js')}}"></script>
     <script src="{{asset('assets/plugins/codemirror/mode/htmlmixed/htmlmixed.js')}}"></script>
+    @yield('footer')
+
     <script>
         $(function() {
             // Summernote

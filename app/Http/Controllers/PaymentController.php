@@ -25,4 +25,11 @@ class PaymentController extends Controller
 
         return redirect()->route('home')->with('success', 'Pembayaran Berhasil');
     }
+
+    public function order_history()
+    {
+        $user = Auth::user();
+        $data = $this->paymentService->find_one_with_user($user->id);
+        return view('user.order_history', compact('data'));
+    }
 }

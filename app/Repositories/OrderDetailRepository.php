@@ -47,4 +47,42 @@ class OrderDetailRepository
         $order = OrderDetails::where('order_id', $id)->with('product')->get();
         return $order;
     }
+
+    public function update_quantity($id, $data)
+    {
+
+        $order = OrderDetails::where('id', $id)->first();
+        // dd($order);
+        $order->quantity = $data['quantity'];
+        $order->update();
+        return $order;
+    }
+
+    public function delete_item($id)
+    {
+
+        $order = OrderDetails::where('id', $id)->delete();
+        // dd($order);
+
+        return $order;
+    }
+
+    public function bidding_price($id, $data)
+    {
+        $order = OrderDetails::where('id', $id)->first();
+        // dd($order);
+        $order->total_price = $data['total_price'];
+        $order->update();
+        return $order;
+    }
+
+    public function volume_update($id, $data)
+    {
+
+        $order = OrderDetails::where('id', $id)->first();
+        // dd($order);
+        $order->volume = $data['volume'];
+        $order->update();
+        return $order;
+    }
 }

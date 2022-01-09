@@ -22,7 +22,12 @@ class CreateProductsTable extends Migration
             $table->integer('weight');
             $table->integer('price');
             $table->string('image');
+            $table->unsignedBigInteger('category_id')->index();
+
             $table->timestamps();
+
+
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

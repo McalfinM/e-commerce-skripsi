@@ -67,86 +67,15 @@
 
 
 
-        </div>
-        </hr>
-        <h5>Metode Pengiriman</h5>
-        <!-- <h5>Pilih Kota Asal Pengiriman</h5> -->
-        <form action="{{route('check_cost')}}" method="POST">
-            @csrf
-            <!-- <div class="row justify-content-center">
-                <div class="col-lg-6">
-                    <select id="provinsi_ongkir" name="province" class="form-control">
-                        <option value="">Provinsi</option>
-                        @foreach ($result->rajaongkir->results as $province)
-                        <option value="{{ $province->province_id }}">{{ $province->province }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="col-lg-6">
-
-                    <select name="cities" id="cities" class="form-control">
-                        <option>Kota</option>
-                    </select>
-                </div>
-            </div> -->
-            </hr>
-            </br>
-            <h5>Pilih Kota Tujuan Pengiriman</h5>
-            </hr>
-            <div class="row justify-content-center">
-                <div class="col-lg-4">
-                    <select id="provinsi_destinasi" name="province" class="form-control">
-                        <option value="">Provinsi</option>
-                        @foreach ($result->rajaongkir->results as $province)
-                        <option value="{{ $province->province_id }}">{{ $province->province }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="col-lg-4">
-
-                    <select name="destinasi" id="city_destinasi" class="form-control">
-                        <option>Kota</option>
-                    </select>
-                </div>
-                <div class="col-lg-4">
-                    <!-- <label style="color: black;" for="weight">Berat/Gram</label> -->
-                    <input type="number" name="weight" id="weight" class="form-control" value="{{$total_weight}}" placeholder="Berat(gram)" />
-
-                </div>
-                </br>
-
-
-
-            </div>
-            </hr>
-            </br>
-            <div class="row">
-                <div class="col-lg-6">
-                    <label>Model Pengiriman JNE</label>
-                    <select name="result_ongkir" id="result_ongkir" class="form-control">
-                        <option>Model Pengiriman JNE</option>
-                    </select>
-                </div>
-                <div class="col-lg-3" id="result_ongkir_value">
-
-                </div>
-                <div class="col-lg-3" id="etd">
-
-                </div>
-            </div>
-            </br>
             <div style="float: right;">
                 <div class="checkout_btn_inner d-flex align-items-center">
                     <a class="btn btn-secondary" href="/">Continue Shopping</a>
                     <a class="btn btn-primary ml-2" href="{{route('checkout',$order->order_number)}}">Proceed to checkout</a>
                 </div>
             </div>
-        </form>
+        </div>
+
     </div>
-
-
 </section>
 @else
 <section class="cart_area">
