@@ -32,4 +32,16 @@ class PdfGenerateService
         $pdf->render();
         return $pdf;
     }
+
+    public function lihat_pesanan_pelanggan($order, $data)
+
+    {
+
+        $pdf = new Dompdf();
+        $html = view('lihat_pesanan', compact('order', 'data'));
+        $pdf->loadHtml($html);
+        $pdf->setPaper('A4', 'potrait');
+        $pdf->render();
+        return $pdf;
+    }
 }

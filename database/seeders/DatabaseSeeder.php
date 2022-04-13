@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Faker\Generator as Faker;
+use Illuminate\Support\Facades\Date;
 
 class DatabaseSeeder extends Seeder
 {
@@ -47,7 +48,7 @@ class DatabaseSeeder extends Seeder
                 'stock' => rand(1, 100),
                 'category_id' => rand(1, 7),
                 'slug' => Str::slug($faker->name),
-                'weight' => rand(1, 100)
+                'pack_true' => rand(0, 1)
             ]);
         }
 
@@ -56,19 +57,33 @@ class DatabaseSeeder extends Seeder
             'username' => 'admin',
             'password' => bcrypt('password'),
             'email' => 'admin@gmail.com',
-            'role' => 'Admin'
+            'role' => 'Admin',
+            'google2fa_secret' => null
         ]);
         DB::table('users')->insert([
             'username' => 'company',
             'password' => bcrypt('password'),
             'email' => 'company@gmail.com',
-            'role' => 'Company'
+            'role' => 'Company',
+            'google2fa_secret' => null
         ]);
-        DB::table('users')->insert([
-            'username' => 'user',
-            'password' => bcrypt('password'),
-            'email' => 'user@gmail.com',
-            'role' => 'Member'
+
+        DB::table('profiles')->insert([
+            'user_id' => 2,
+            'phone' => '0895775487',
+            'name' => 'admin',
+            'pic_name' => 'admin',
+            'image' => 'image.jpg',
+            'created_at' => Date::now(),
+            'updated_at' => Date::now()
+        ]);
+
+        DB::table('profiles')->insert([
+            'user_id' => 1,
+            'phone' => '0895775487',
+            'name' => 'company',
+            'pic_name' => 'company',
+            'image' => 'image.jpg'
         ]);
     }
 }

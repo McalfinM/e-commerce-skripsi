@@ -24,8 +24,19 @@
         </div>
         @endif
         <div class="row justify-content-center">
+
+            const number = 10
+            const number2 =0
             @foreach($data as $datas)
+            api.map((v,i) => {
+            number = i
+            number2 = number + 1
+            return (
+            <table>number</table>
+            )
+            })
             <div class="card text-center card-product m-3">
+                <td>$no</td>
                 <div class="card-product__img">
                     <img width="150" height="130" src="{{$datas->getImage()}}" alt="">
 

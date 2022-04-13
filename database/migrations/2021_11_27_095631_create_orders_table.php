@@ -19,8 +19,9 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('user_id')->index();
             $table->string('address')->nullable();
             $table->string('notes')->nullable();
-            $table->enum('status', ['Order Created', 'Request Price', 'Bidding', 'Processed', 'Deal', 'Done']);
-            $table->string('type')->nullable();
+            $table->string('pic_name')->nullable();
+            $table->enum('status', ['Order Created', 'Request Price', 'Bidding', 'Processed', 'Order Ready', 'Company Deal', 'Deal', 'Done']);
+            $table->string('surat_jalan')->nullable();
             $table->integer('quantity');
             $table->timestamps();
 

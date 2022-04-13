@@ -19,6 +19,9 @@ class CreateOrderDetailsTable extends Migration
             $table->unsignedBigInteger('product_id')->index();
             $table->integer('quantity');
             $table->integer('total_price');
+            $table->integer('previous_price');
+            $table->integer('previous_quantity');
+            $table->string('previous_volume')->nullable();
             $table->string('volume')->nullable();
             $table->timestamps();
 

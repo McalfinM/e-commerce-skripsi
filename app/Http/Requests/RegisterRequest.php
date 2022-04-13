@@ -27,7 +27,7 @@ class RegisterRequest extends FormRequest
             'username' => 'required|string|unique:users',
             'password' => 'required|string|max:15',
             'confirm_password' => 'required|string|max:15|same:password',
-            'type' => 'required|string',
+            'company_name' => 'required|string',
             'email' => 'required|string|unique:users',
             'company_document' => 'image|file|mimes:jpg,png,jpeg|nullable',
         ];

@@ -6,6 +6,7 @@ use App\Services\OrderDetailService;
 use App\Services\OrderService;
 use App\Services\PdfGenerateService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -31,6 +32,7 @@ class AdminController extends Controller
     public function list_request_bidding()
     {
         $data = $this->orderService->find_all_with_status_request_price_or_bidding();
+
         if ($data) {
             return view('admin.order.bidding_request', compact('data'));
         } else {
@@ -58,14 +60,16 @@ class AdminController extends Controller
     public function send_bidding_price(Request $request)
     {
         $status = 'Bidding';
-        $this->orderService->send_bidding_price($request->id, $status);
+        $user = Auth::user();
+        $this->orderService->send_bidding_price($request->id, $status, $user);
         return redirect()->back()->with('success', 'Data berhasil di kirim');
     }
 
     public function bidding_deal(Request $request)
     {
         $status = 'Processed';
-        $this->orderService->send_bidding_price($request->id, $status);
+        $user = Auth::user();
+        $this->orderService->send_bidding_price($request->id, $status, $user);
         return redirect()->route('list_request_bidding')->with('success', 'Data disetujui');
     }
 
@@ -88,7 +92,8 @@ class AdminController extends Controller
     public function success_order(Request $request)
     {
         $status = 'Done';
-        $this->orderService->send_bidding_price($request->id, $status);
+        $user = Auth::user();
+        $this->orderService->send_bidding_price($request->id, $status, $user);
         return redirect()->route('list_request_bidding')->with('success', 'Order Berhasil Diselesaikan');
     }
 }

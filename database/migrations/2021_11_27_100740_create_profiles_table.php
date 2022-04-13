@@ -16,10 +16,11 @@ class CreateProfilesTable extends Migration
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->index();
-            $table->string('full_name');
-            $table->string('phone_number')->nullable();
+            $table->string('name');
+            $table->string('phone');
             $table->string('address')->nullable();
             $table->string('image');
+            $table->string('pic_name');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');

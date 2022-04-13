@@ -19,6 +19,7 @@ class CompanyMiddleware
     {
         if (Auth::user()) {
             if (Auth::user()->role === 'Company') {
+                redirect()->route('company_dashboard');
                 return $next($request);
             } else {
                 redirect('/');

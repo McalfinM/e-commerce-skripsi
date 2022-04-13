@@ -2,10 +2,14 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "bacon/bacon-qr-code": "^2.0",
         "barryvdh/laravel-dompdf": "^0.9.0",
         "cviebrock/eloquent-sluggable": "^8.0",
         "dompdf/dompdf": "^1.1",
@@ -15,7 +19,10 @@
         "laravel/framework": "^8.65",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
-        "maatwebsite/excel": "^3.1"
+        "maatwebsite/excel": "^3.1",
+        "phpseclib/phpseclib": "~3.0",
+        "pragmarx/google2fa-laravel": "^2.0",
+        "smsgatewayme/client": "^0.0.1"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

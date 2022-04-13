@@ -9,8 +9,10 @@ class OrderDetailService
 
     protected $orderDetailRepository;
 
-    public function __construct(OrderDetailRepository $orderDetailRepository)
-    {
+
+    public function __construct(
+        OrderDetailRepository $orderDetailRepository
+    ) {
         $this->orderDetailRepository = $orderDetailRepository;
     }
 
@@ -43,10 +45,15 @@ class OrderDetailService
         return $data;
     }
 
-    public function bidding_price($id, $data)
+    public function bidding_price($id, $payload, $user)
     {
         // dd($data['quantity']);
-        $data = $this->orderDetailRepository->bidding_price($id, $data);
+
+        $data = $this->orderDetailRepository->bidding_price($id, $payload);
+
+        if ($user->role == 'Admin') {
+            $this->orderDetailRepository->update_previous_price($id, $payload);
+        }
         $order = $this->orderDetailRepository->find_by_id_search_with_order_created($data->order_id);
         return $order;
     }
@@ -61,6 +68,7 @@ class OrderDetailService
 
     public function volume_update($id, $data)
     {
+
         $data = $this->orderDetailRepository->volume_update($id, $data);
         return $data;
     }

@@ -3,18 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RegisterRequest;
+use App\Providers\RouteServiceProvider;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Session;
+use PragmaRX\Google2FALaravel\Support\Authenticator;
 
 class AuthController extends Controller
 {
+
     protected $userService;
 
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
+        $this->middleware('guest')->except('logout');
     }
     public function register()
     {
@@ -31,16 +35,13 @@ class AuthController extends Controller
 
     public function register_process(RegisterRequest $request)
     {
-        // dd($request);
-
-
         $this->userService->create($request->all());
         return redirect()->back()->with('success', 'Akun berhasil terbuat');
     }
     public function login()
     {
         if (Auth::user()) {
-            return redirect()->route('home');
+            return redirect()->route('company_dashboard');
         }
         return view('auth.login');
     }
@@ -53,15 +54,16 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
+
         $credentials = $request->only('username', 'password');
         if (Auth::attempt($credentials)) {
             $role = Auth::user()->role;
+            auth()->user()->generateCode();
             if ($role == 'Admin') {
-                return redirect()->intended('/admin/dashboard');
-            } elseif ($role == 'Member' || $role == 'Company') {
-                return redirect()->intended('/');
+                return redirect()->route('2fa.index');
+            } elseif ($role == 'Company') {
+                return redirect()->route('2fa.index');
             }
-            return redirect('/');
         }
 
         return redirect('login')->with('error', 'Login gagal.');
@@ -69,7 +71,9 @@ class AuthController extends Controller
 
     public function logout()
     {
+
         Auth::logout();
-        return redirect()->route('home')->with('success', 'Logout Berhasil');
+        Session::remove('user_2fa');
+        return redirect()->route('login')->with('success', 'Logout Berhasil');
     }
 }

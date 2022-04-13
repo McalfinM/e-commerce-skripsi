@@ -19,4 +19,11 @@ class Order extends Model
     {
         return $this->hasMany(OrderDetails::class);
     }
+
+    public function lihat_surat()
+    {
+        if ($this->surat_jalan) {
+            return asset('pdf/surat_jalan/' . $this->surat_jalan);
+        }
+    }
 }

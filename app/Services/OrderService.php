@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\OrderRepository;
 use DateTime;
+use Error;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 
@@ -23,7 +24,7 @@ class OrderService
     public function createOrUpdate($data, $user)
     {
 
-        $order = $this->orderRepository->find_one_with_user_and_type($user->id, $data['type']);
+        $order = $this->orderRepository->find_one_with_user_and_type($user->id);
         if (!$order) {
             $product = $this->productService->find_one($data->product_id);
             if (!$product) {
@@ -37,22 +38,22 @@ class OrderService
                 'user_id' => $user->id,
                 'status' => 'Order Created',
                 'quantity' => 1,
-                'type' => $data['type']
-
             ];
             $order = $this->orderRepository->create($order_entity);
+
+
             $price = 0;
-            if ($data['type'] == 'company_order') {
-                $price = 0;
-            } else {
-                $price = $product->price * 1;
-            }
+
+            $price = $product->price * 1;
+
             $entity = [
                 'order_id' => $order->id,
                 'product_id' => $product->id,
                 'quantity' => 1,
                 'address' => "none",
-                'total_price' => $price
+                'total_price' => 0,
+                'previous_price' => 0,
+                'previous_quantity' => 0
 
             ];
 
@@ -68,17 +69,16 @@ class OrderService
 
             if ($order_detail) {
                 $total_quantity = $order_detail->quantity + 1;
-                if ($data['type'] == 'company_order') {
-                    $price = 0;
-                } else {
-                    $price = $product->price * $total_quantity;
-                }
+
+                $price = $product->price * $total_quantity;
+
                 $entity = [
                     'order_id' => $order->id,
                     'product_id' => $product->id,
                     'quantity' => $order_detail->quantity += 1,
-
-                    'total_price' => $price
+                    'previous_price' => 0,
+                    'total_price' => 0,
+                    'previous_quantity' => 0
 
                 ];
 
@@ -96,7 +96,6 @@ class OrderService
                     'user_id' => $user->id,
                     'status' => 'Order Created',
                     'quantity' => $quantity,
-                    'type' => $order['type']
 
                 ];
                 $this->orderRepository->update($order_entity);
@@ -113,7 +112,9 @@ class OrderService
                     'quantity' => 1,
                     'notes' => "none",
                     'address' => "none",
-                    'total_price' => $price
+                    'total_price' => $price,
+                    'previous_price' => 0,
+                    'previous_quantity' => 0
 
                 ];
                 $this->orderDetailService->create($entity);
@@ -128,7 +129,6 @@ class OrderService
                     'user_id' => $user->id,
                     'status' => 'Order Created',
                     'quantity' => $quantity,
-                    'type' => $order['type']
 
                 ];
                 $this->orderRepository->update($order_entity);
@@ -196,9 +196,27 @@ class OrderService
         return $this->orderRepository->find_with_type_company($id);
     }
 
-    public function company_request_price_order($data)
+    public function company_request_price_order($id, $user)
     {
-        return $this->orderRepository->company_request_price_order($data);
+
+        $orderDetail = $this->orderDetailService->find_by_id_search_with_order_created($id);
+
+        $order = $this->orderRepository->find_order_with_status_success($user->id);
+
+        if ($order->status !== 'Order Created') {
+            return redirect()->back()->with('error', 'Masih ada pesanan yang belum selesai');
+        } else {
+            for ($i = 0; $i < count($orderDetail); $i++) {
+                $product = $this->productService->find_one($orderDetail[$i]->product_id);
+                if ($product->pack_true == 1 && $orderDetail[$i]->volume == 'Unit') {
+                    return redirect()->back()->with('error', $product->name . ' tidak bisa dalam satuan unit');
+                }
+                if ($orderDetail[$i]->volume == null) {
+                    return redirect()->back()->with('error', 'Masukan satuan anda');
+                }
+            }
+        }
+        return $this->orderRepository->company_request_price_order($id);
     }
 
     public function find_all_with_status_request_price_or_bidding()
@@ -216,8 +234,18 @@ class OrderService
         return $this->orderRepository->find_one_with_status_request_price_or_bidding($id);
     }
 
-    public function send_bidding_price($id, $status)
+    public function send_bidding_price($id, $status, $user)
     {
+        if ($user->role == 'Admin') {
+            $data = $this->orderDetailService->find_by_id_search_with_order_created($id);
+            // buat sebuah logika untuk mengupdate setiap previous value ketika pengajuan di tawarkan oleh admin
+        }
         return $this->orderRepository->send_bidding_price($id, $status);
+    }
+
+    public function find_order_with_status_success($user_id)
+    {
+        $order = $this->orderRepository->find_order_with_status_success($user_id);
+        return $order;
     }
 }

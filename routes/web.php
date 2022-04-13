@@ -5,9 +5,12 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\LoginSecurityController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TwoFAController;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,13 +28,10 @@ Route::get('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/register_process', [AuthController::class, 'register_process'])->name('register_process');
 Route::post('/login_process', [AuthController::class, 'login_process'])->name('login_process');
 Route::get('/login', [AuthController::class, 'login'])->name('login');
-Route::get('/', [HomeController::class, 'home'])->name('home');
+Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::get('/products/{slug}', [HomeController::class, 'product_detail'])->name('product_detail');
-Route::get('/cities/{id}', [LocationController::class, 'get_all_city_from_province'])->name('get_all_city_from_province');
-Route::get('/districts/{id}', [LocationController::class, 'get_all_district_from_city'])->name('get_all_city_from_city');
-Route::get('/city/province/{id}', [LocationController::class, 'get_city_from_province_rajaongkir'])->name('city_rajaongkir');
 Route::post('/cost', [OrderController::class, 'check_cost'])->name('check_cost');
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => ['auth']], function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('/add-to-cart', [OrderController::class, 'createOrUpdate'])->name('createOrUpdate_order');
     Route::get('/carts', [HomeController::class, 'cart'])->name('cart');
@@ -64,7 +64,7 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     });
 });
 
-Route::group(['middleware' => 'company', 'prefix' => 'company'], function () {
+Route::group(['middleware' => ['auth', '2fa', 'company'], 'prefix' => 'company'], function () {
 
     Route::get('/dashboard', [CompanyController::class, 'dashboard'])->name('company_dashboard');
     Route::get('/shop', [CompanyController::class, 'index'])->name('company_shop');
@@ -76,7 +76,24 @@ Route::group(['middleware' => 'company', 'prefix' => 'company'], function () {
         Route::post('/send-bidding/{id}', [CompanyController::class, 'request_bidding_price'])->name('request_bidding_price');
         Route::post('/deal/{id}', [CompanyController::class, 'bidding_deal'])->name('bidding_deal_company');
         Route::post('/volume-update', [OrderController::class, 'volume_update'])->name('volume_update');
+        Route::post('/complete-data/{order_number}', [OrderController::class, 'complete_data'])->name('complete_data');
+        Route::get('/lihat_pesanan/{id}', [CompanyController::class, 'lihat_pesanan_pelanggan'])->name('lihat_pesanan_pelanggan');
     });
     Route::post('/cart-update', [OrderController::class, 'cart_update'])->name('cart_update');
     Route::get('/delete-item/{id}', [OrderController::class, 'delete_item'])->name('delete_item');
+
+    Route::group(['prefix' => '2fa'], function () {
+        Route::get('/', [LoginSecurityController::class, 'show2faForm'])->name('form2fa');
+        Route::post('/generateSecret', [LoginSecurityController::class, 'generate2faSecret'])->name('generate2faSecret');
+        Route::post('/enable2fa', [LoginSecurityController::class, 'enable2fa'])->name('enable2fa');
+        Route::post('/disable2fa', [LoginSecurityController::class, 'disable2fa'])->name('disable2fa');
+
+        // 2fa middleware
+        Route::post('/2faVerify', function () {
+            return redirect(URL()->previous());
+        })->name('2faVerify')->middleware('2fa');
+    });
 });
+Route::get('2fa', [TwoFAController::class, 'index'])->name('2fa.index');
+Route::post('2fa', [TwoFAController::class, 'create'])->name('2fa.post');
+Route::get('2fa/reset', [TwoFAController::class, 'resend'])->name('2fa.resend');

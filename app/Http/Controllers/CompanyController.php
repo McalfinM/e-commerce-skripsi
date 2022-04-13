@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\OrderDetailService;
 use App\Services\OrderService;
+use App\Services\PdfGenerateService;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,11 +15,17 @@ class CompanyController extends Controller
     protected $productService;
     protected $orderService;
     protected $orderDetailService;
-    public function __construct(ProductService $productService, OrderService $orderService, OrderDetailService $orderDetailService)
-    {
+    protected $pdfGenerateService;
+    public function __construct(
+        ProductService $productService,
+        OrderService $orderService,
+        OrderDetailService $orderDetailService,
+        PdfGenerateService $pdfGenerateService
+    ) {
         $this->productService = $productService;
         $this->orderService = $orderService;
         $this->orderDetailService = $orderDetailService;
+        $this->pdfGenerateService = $pdfGenerateService;
     }
     public function dashboard()
     {
@@ -28,7 +35,16 @@ class CompanyController extends Controller
     public function index(Request $request)
     {
         $data = $this->productService->get_all($request->search);
-        return view('company.index', compact('data'));
+        $user = Auth::user();
+        $order = $this->orderService->find_one_with_user_and_status($user->id);
+        if ($order) {
+            $orderDetail = $this->orderDetailService->find_by_id_search_with_order_created($order->id);
+
+            return view('company.index', compact('data', 'order', 'orderDetail'));
+        } else {
+            $orderDetail = null;
+            return view('company.index', compact('data', 'orderDetail', 'order'));
+        }
     }
 
     public function order()
@@ -69,15 +85,35 @@ class CompanyController extends Controller
 
     public function request_bidding_price(Request $request)
     {
-        $status = 'Request Price';
-        $this->orderService->send_bidding_price($request->id, $status);
+        $status = "";
+        if ($request->company == 'agree') {
+            $status = "Company Deal";
+        } else {
+
+            $status = 'Request Price';
+        }
+        $user = Auth::user();
+        $this->orderService->send_bidding_price($request->id, $status, $user);
         return redirect()->back()->with('success', 'Permintaan berhasil dikirim');
     }
 
     public function bidding_deal(Request $request)
     {
         $status = 'Deal';
-        $this->orderService->send_bidding_price($request->id, $status);
+        $user = Auth::user();
+        $this->orderService->send_bidding_price($request->id, $status, $user);
         return redirect()->back()->with('success', 'Terima Kasih Telah memilih kami ' . Auth::user()->username);
+    }
+
+    public function change_profile(Request $request)
+    {
+    }
+
+    public function lihat_pesanan_pelanggan(Request $request)
+    {
+        $order = $this->orderService->find_one_with_status_request_price_or_bidding($request->id);
+        $orderDetail = $this->orderDetailService->find_by_id_search_with_order_created($order->id);
+        $data =  $this->pdfGenerateService->lihat_pesanan_pelanggan($order, $orderDetail);
+        return $data->stream();
     }
 }

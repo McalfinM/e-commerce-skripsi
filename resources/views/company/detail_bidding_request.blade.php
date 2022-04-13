@@ -21,111 +21,123 @@
     </ul>
 </div>
 @endif
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">Product</th>
-            <th scope="col">Quantity</th>
-            <th scope="col">Satuan</th>
-            <th scope="col">Harga Di Tawarkan (Rp)</th>
+@if($order->surat_jalan !== null)
+<a href="{{route('lihat_pesanan_pelanggan', $order->id)}}" class="btn btn-primary">Lihat Daftar Pesanan</a>
+@endif
+<div class="card">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Product</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Satuan</th>
+                <th scope="col">Harga Di Tawarkan (Rp)</th>
+                <th scope="col">Harga Sebelumnya (Rp)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @php
+            $sub_total = 0;
+            @endphp
+            @if($orderDetail!== null)
+            @foreach($orderDetail as $detail)
+            @php
+            $sub_total += $detail->total_price;
 
-        </tr>
-    </thead>
-    <tbody>
-        @php
-        $sub_total = 0;
-        @endphp
-        @if($orderDetail!== null)
-        @foreach($orderDetail as $detail)
-        @php
-        $sub_total += $detail->total_price;
+            @endphp
 
-        @endphp
-
-        <tr>
-            <td>
-                <div class="media">
-                    <div class="d-flex">
-                        <img src="img/cart/cart1.png" alt="">
+            <tr>
+                <td>
+                    <div class="media">
+                        <div class="d-flex">
+                            <img src="img/cart/cart1.png" alt="">
+                        </div>
+                        <div class="media-body">
+                            <p style="color: black;">{{$detail->product->name}}</p>
+                        </div>
                     </div>
-                    <div class="media-body">
-                        <p style="color: black;">{{$detail->product->name}}</p>
-                    </div>
-                </div>
-            </td>
+                </td>
 
-            <td>
-                <div class="product_count">
-                    <input type="hidden" class="pid" value="{{$detail['id']}}" />
+                <td>
+                    <div class="product_count">
+                        <input type="hidden" class="pid" value="{{$detail['id']}}" />
+                        @if($order->status == 'Bidding')
+                        <input width="70px" type="number" style="width: 200px;" name="quantity" value="{{$detail->quantity}}" class="quantity form-control" />
+                        @else
+                        <input style="width: 70px;" readonly name="total_price" value="{{$detail->quantity}}" class="form-control" />
+                        @endif
+
+                    </div>
+                </td>
+                <td>
                     @if($order->status == 'Bidding')
-                    <input width="70px" type="number" style="width: 200px;" name="quantity" value="{{$detail->quantity}}" class="quantity form-control" />
+                    <select name="volume" class="form-control">
+                        <option>{{$detail->volume}}</option>
+                        @if($detail->volume === 'Pack')
+                        <option value="Unit">Unit</option>
+                        @elseif($detail->volume === 'Unit')
+                        <option value="Pack">Pack</option>
+                        @endif
+                    </select>
                     @else
-                    <input style="width: 70px;" readonly name="total_price" value="{{$detail->quantity}}" class="form-control" />
+                    <input readonly type="text" value="{{$detail->volume}}" />
                     @endif
-
-                </div>
-            </td>
-            <td>
-                @if($order->status == 'Bidding')
-                <select name="volume" class="form-control">
-                    <option>{{$detail->volume}}</option>
-                    <option value="Pack">Pack</option>
-                    <option value="Unit">Unit</option>
-                </select>
-                @else
-                <input readonly type="text" value="{{$detail->volume}}" />
-                @endif
-            </td>
-            <td>
-                @if($order->status == 'Bidding')
-                <input style="width: 200px;" name="total_price" value="{{number_format($detail->total_price, 0,',', '.');}}" class="itemQty form-control" />
-                @else
-                <input style="width: 200px;" readonly name="total_price" value="{{number_format($detail->total_price, 2, ',', '.');}}" class="form-control" />
-                @endif
-            </td>
+                </td>
+                <td>
+                    @if($order->status == 'Bidding')
+                    <input style="width: 200px;" name="total_price" value="{{number_format($detail->total_price, 0,',', '.');}}" class="itemQty form-control" />
+                    @else
+                    <input style="width: 200px;" readonly name="total_price" value="{{number_format($detail->total_price, 2, ',', '.');}}" class="form-control" />
+                    @endif
+                </td>
+                <td> <input style="width: 200px;" readonly name="total_price" value="{{number_format($detail->previous_price, 2, ',', '.');}}" class="form-control" /></td>
 
 
-        </tr>
+            </tr>
 
-        @endforeach
-        <tr>
-            <td></td>
-            <td></td>
-            <td>Total Harga</td>
-            <td id="sub_total" style="color: black;">{{"Rp " . number_format($sub_total, 2, ',', '.');}}</td>
-        </tr>
+            @endforeach
+            <tr>
+                <td></td>
+                <td></td>
+                <td>Total Harga</td>
+                <td id="sub_total" style="color: black;">{{"Rp " . number_format($sub_total, 2, ',', '.');}}</td>
+            </tr>
 
-        @endif
+            @endif
 
 
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 @if($order && $order->status == 'Bidding')
 <div class="row">
-    <form action="{{route('request_bidding_price',$order->id)}}" method="POST">
+    <form class="mr-2" action="{{route('request_bidding_price',$order->id)}}" method="POST">
         @csrf
         <button class="btn btn-primary" type="submit">Ajukan Penawaran</button>
+        <input name="company" value="menawar" type="hidden" />
     </form>
+
     <!-- <form action="{{route('bidding_deal_company',$order->id)}}" method="POST">
         @csrf
-        <button class="btn btn-success" type="submit">Setuju</button>
+        <button style="visibility: visible;" id="setuju" class="btn btn-success" type="submit">Setuju</button>
     </form> -->
 </div>
 @else
 @endif
 @if($order->status == 'Processed')
-<input type="text" name="address" class="form-control" value="{{$detail->address}}" placeholder="Alamat Pengiriman" />
-</br>
-<div class="justify-content-center">
-    <button class="btn btn-success">Terima Kasih telah memilih kami, Penawaran telah di setujui</button>
-</div>
+<br>
+@include('company.completing_order')
+
 @endif
+
 @section('footer')
 <script>
     $(document).ready(function() {
         $(".itemQty").on('change', function() {
             var $el = $(this).closest('tr');
             var pid = $el.find(".pid").val();
+            var prev = $el.find(".pid").val();
+
             // var price = $el.find(".product_price").val();
             var quantity = $el.find(".itemQty").val();
             let html = ""

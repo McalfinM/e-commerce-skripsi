@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CheckOngkirRequest;
+use App\Http\Requests\CompleteOrderRequest;
 use App\Http\Requests\CreateOrderRequest;
+use App\Models\Order;
 use App\Services\OrderDetailService;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
@@ -59,14 +62,23 @@ class OrderController extends Controller
 
     public function company_request_price_order(Request $request)
     {
-        $data = $this->orderService->company_request_price_order($request->id);
-        return redirect()->back()->with('success', 'List Barang dikirim');
+
+        $auth = Auth::user();
+        $data = $this->orderService->company_request_price_order($request->id, $auth);
+        if ($data && $data->status() == 302) {
+            return redirect()->back();
+        } else {
+
+            return redirect()->back()->with('success', 'Data berhasil dikirim');
+        }
     }
 
     public function bidding_price(Request $request)
     {
         $id = $request->input('id');
-        $data = $this->orderDetailService->bidding_price($id, $request);
+        $user = Auth::user();
+        $data = $this->orderDetailService->bidding_price($id, $request, $user);
+
         return $data;
     }
 
@@ -75,5 +87,23 @@ class OrderController extends Controller
         $id = $request->input('id');
         $data = $this->orderDetailService->volume_update($id, $request);
         return $data;
+    }
+
+    public function complete_data(CompleteOrderRequest $request)
+    {
+        $file_name = "";
+        if ($request->file('surat_jalan')) {
+            $sertifikat = $request->file('surat_jalan');
+            $file_name = Str::random(20) . '.' . $sertifikat->extension();
+            $sertifikat->move('pdf/surat_jalan', $file_name);
+        }
+
+        $order = Order::where('order_number', $request->order_number)->first();
+        $order->surat_jalan = $file_name;
+        $order->address = $request->address;
+        $order->pic_name = $request->pic_name;
+        $order->update();
+
+        return redirect()->back()->with('success', 'Data berhasil di update');
     }
 }

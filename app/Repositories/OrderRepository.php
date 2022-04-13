@@ -14,7 +14,7 @@ class OrderRepository
         $order->user_id = $data['user_id'];
         $order->status = $data['status'];
         $order->quantity = $data['quantity'];
-        $order->type = $data['type'];
+
         $order->save();
 
         return $order;
@@ -38,9 +38,9 @@ class OrderRepository
         return $order;
     }
 
-    public function find_one_with_user_and_type($id, $type)
+    public function find_one_with_user_and_type($id)
     {
-        $order = Order::where('user_id', $id)->where('status', 'Order Created')->where('type', $type)->first();
+        $order = Order::where('user_id', $id)->where('status', 'Order Created')->first();
 
         return $order;
     }
@@ -71,12 +71,13 @@ class OrderRepository
 
     public function find_with_type_company($id)
     {
-        $order = Order::where('user_id', $id)->where('status', 'Order Created')->where('type', 'company_order')->first();
+        $order = Order::where('user_id', $id)->where('status', 'Order Created')->first();
         return $order;
     }
 
     public function company_request_price_order($id)
     {
+
         $order = Order::where('id', $id)->where('status', 'Order Created')->first();
         $order->status = 'Request Price';
         $order->update();
@@ -107,6 +108,13 @@ class OrderRepository
         $order = Order::where('id', $id)->where('status', '<>', 'Order Created')->first();
         $order->status = $status;
         $order->update();
+        return $order;
+    }
+
+
+    public function find_order_with_status_success($user_id)
+    {
+        $order = Order::where('user_id', $user_id)->where('status', '!=', 'Done')->first();
         return $order;
     }
 }

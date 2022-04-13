@@ -21,13 +21,7 @@ class UserService
 
     public function create($data)
     {
-        // dd($data);
-        if ($data['type'] == 'company') {
-            $data['role'] = 'Company';
-        } else {
-            $data['role'] = 'Member';
-        }
-        // dd($data);
+
 
 
         if ($data['password'] !== $data['confirm_password']) {
@@ -41,7 +35,7 @@ class UserService
             'user_id' => $user->id,
             'full_name' => $user->username,
             'phone_number' => null,
-            'address' => null,
+            'address' => $data['address'],
             'image' => 'image.jpg'
 
         ];

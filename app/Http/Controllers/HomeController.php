@@ -17,15 +17,13 @@ class HomeController extends Controller
     protected $orderService;
     protected $orderDetailService;
     protected $locationService;
-    protected $rajaOngkirService;
 
-    public function __construct(ProductService $productService, OrderService $orderService, OrderDetailService $orderDetailService, LocationService $locationService, RajaOngkirService $rajaOngkirService)
+    public function __construct(ProductService $productService, OrderService $orderService, OrderDetailService $orderDetailService, LocationService $locationService)
     {
         $this->productService = $productService;
         $this->orderService = $orderService;
         $this->orderDetailService = $orderDetailService;
         $this->locationService = $locationService;
-        $this->rajaOngkirService = $rajaOngkirService;
     }
 
     public function home(Request $request)
